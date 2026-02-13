@@ -6,5 +6,12 @@ description: Start Shopify theme development server
 // turbo
 2. Run the following command:
 ```bash
-shopify theme dev --store theme-whiteboard.myshopify.com --password lailel
+/Users/giuseppevivaldi/.nvm/versions/node/v24.13.1/bin/node /Users/giuseppevivaldi/.nvm/versions/node/v24.13.1/bin/shopify theme dev --store theme-whiteboard.myshopify.com
+```
+
+3. Open the preview in the browser:
+// turbo
+4. Run:
+```bash
+open http://127.0.0.1:9292
 ```

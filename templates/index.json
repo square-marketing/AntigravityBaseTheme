@@ -1,0 +1,38 @@
+{
+    "sections": {
+        "hero": {
+            "type": "hero"
+        },
+        "brands": {
+            "type": "brands-strip"
+        },
+        "new_arrivals": {
+            "type": "featured-collection",
+            "settings": {
+                "title": "NEW ARRIVALS",
+                "products_to_show": 4
+            }
+        },
+        "top_selling": {
+            "type": "featured-collection",
+            "settings": {
+                "title": "TOP SELLING",
+                "products_to_show": 4
+            }
+        },
+        "browse_style": {
+            "type": "browse-by-style"
+        },
+        "reviews": {
+            "type": "reviews"
+        }
+    },
+    "order": [
+        "hero",
+        "brands",
+        "new_arrivals",
+        "top_selling",
+        "browse_style",
+        "reviews"
+    ]
+}

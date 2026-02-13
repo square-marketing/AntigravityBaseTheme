@@ -4,7 +4,8 @@
     "theme_name": "Antigravity Base Theme",
     "theme_author": "Antigravity",
     "theme_version": "1.0.0",
-    "theme_documentation_url": "https://help.shopify.com/manual/online-store/themes"
+    "theme_documentation_url": "https://help.shopify.com/manual/online-store/themes",
+    "theme_support_url": "https://github.com/square-marketing/AntigravityBaseTheme/issues"
   },
   {
     "name": "Colors",
@@ -17,13 +18,13 @@
         "type": "color",
         "id": "color_text",
         "label": "Body text",
-        "default": "#121212"
+        "default": "#000000"
       },
       {
         "type": "color",
         "id": "color_heading",
         "label": "Headings",
-        "default": "#121212"
+        "default": "#000000"
       },
       {
         "type": "header",
@@ -39,7 +40,7 @@
         "type": "color",
         "id": "color_background_secondary",
         "label": "Secondary background",
-        "default": "#F4F4F4"
+        "default": "#F0F0F0"
       },
       {
         "type": "header",
@@ -55,7 +56,7 @@
         "type": "color",
         "id": "color_secondary",
         "label": "Secondary accent",
-        "default": "#333333"
+        "default": "#F0F0F0"
       },
       {
         "type": "header",
@@ -66,7 +67,7 @@
         "type": "color",
         "id": "color_border",
         "label": "Border color",
-        "default": "#E0E0E0"
+        "default": "#000000"
       }
     ]
   },
@@ -81,7 +82,7 @@
         "type": "font_picker",
         "id": "type_header_font",
         "label": "Font",
-        "default": "assistant_n4"
+        "default": "oswald_n7"
       },
       {
         "type": "range",
@@ -91,7 +92,7 @@
         "step": 1,
         "unit": "px",
         "label": "Base size",
-        "default": 32
+        "default": 48
       },
       {
         "type": "header",
@@ -101,7 +102,7 @@
         "type": "font_picker",
         "id": "type_body_font",
         "label": "Font",
-        "default": "assistant_n4"
+        "default": "inter_n4"
       },
       {
         "type": "range",
@@ -126,7 +127,7 @@
         "step": 10,
         "unit": "px",
         "label": "Page width",
-        "default": 1200
+        "default": 1240
       },
       {
         "type": "range",
@@ -167,7 +168,7 @@
         "step": 1,
         "unit": "px",
         "label": "Corner radius",
-        "default": 0
+        "default": 40
       }
     ]
   },

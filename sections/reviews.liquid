@@ -1,0 +1,163 @@
+{%- style -%}
+  .reviews-section {
+    padding: {{ section.settings.padding_y }}px 0;
+    overflow: hidden;
+  }
+
+  .reviews__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 40px;
+  }
+
+  .reviews__title {
+    font-family: 'Integral CF', sans-serif;
+    font-size: 48px;
+    font-weight: 900;
+    text-transform: uppercase;
+    margin: 0;
+  }
+
+  .reviews__grid {
+    display: flex;
+    gap: 20px;
+    overflow-x: auto;
+    padding-bottom: 20px;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none; /* Firefox */
+  }
+  
+  .reviews__grid::-webkit-scrollbar {
+    display: none; /* Safari and Chrome */
+  }
+
+  .review-card {
+    flex: 0 0 350px;
+    border: 1px solid var(--color-border);
+    border-radius: 20px;
+    padding: 24px;
+    scroll-snap-align: start;
+    background: #fff;
+  }
+
+  .review__stars {
+    color: #FFC633;
+    font-size: 18px;
+    margin-bottom: 12px;
+  }
+
+  .review__author {
+    font-weight: 700;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 12px;
+  }
+
+  .review__check {
+    width: 20px;
+    height: 20px;
+    background: #01AB31;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 12px;
+  }
+
+  .review__text {
+    font-size: 14px;
+    color: rgba(0,0,0,0.6);
+    line-height: 1.5;
+  }
+
+  @media screen and (max-width: 749px) {
+    .reviews__title { font-size: 32px; }
+    .review-card { flex: 0 0 280px; }
+  }
+{%- endstyle -%}
+
+<div class="reviews-section page-width">
+  <div class="reviews__header">
+    <h2 class="reviews__title">{{ section.settings.title | escape }}</h2>
+  </div>
+
+  <div class="reviews__grid">
+    {%- for block in section.blocks -%}
+      <div class="review-card">
+        <div class="review__stars">★★★★★</div>
+        <div class="review__author">
+          {{ block.settings.author }} 
+          {%- if block.settings.verified -%}
+            <span class="review__check">✓</span>
+          {%- endif -%}
+        </div>
+        <div class="review__text">"{{ block.settings.text }}"</div>
+      </div>
+    {%- endfor -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Customer Reviews",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "default": "OUR HAPPY CUSTOMERS",
+      "label": "Heading"
+    },
+    {
+      "type": "range",
+      "id": "padding_y",
+      "min": 20,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Vertical Padding",
+      "default": 60
+    }
+  ],
+  "blocks": [
+    {
+      "type": "review",
+      "name": "Review",
+      "settings": [
+        {
+          "type": "text",
+          "id": "author",
+          "default": "Sarah M.",
+          "label": "Author Name"
+        },
+        {
+          "type": "checkbox",
+          "id": "verified",
+          "default": true,
+          "label": "Verified Badge"
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "default": "I'm blown away by the quality and style of the clothes I received from Shop.co. From casual wear to elegant dresses, every piece I've bought has exceeded my expectations.",
+          "label": "Review Text"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Customer Reviews",
+      "blocks": [
+        { "type": "review", "settings": { "author": "Sarah M." } },
+        { "type": "review", "settings": { "author": "Alex K." } },
+        { "type": "review", "settings": { "author": "James L." } },
+        { "type": "review", "settings": { "author": "Mooen." } }
+      ]
+    }
+  ]
+}
+{% endschema %}

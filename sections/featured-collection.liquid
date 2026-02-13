@@ -1,37 +1,41 @@
 {%- style -%}
   .featured-collection {
     padding: {{ section.settings.padding_y }}px 0;
+    text-align: center;
   }
 
   .featured-collection__title {
-    text-align: {{ section.settings.title_alignment }};
-    margin-bottom: 40px;
+    font-family: 'Integral CF', sans-serif;
+    font-size: 48px;
+    font-weight: 900;
+    text-transform: uppercase;
+    margin-bottom: 50px;
   }
 
   .product-grid {
     display: grid;
     grid-template-columns: repeat({{ section.settings.columns_desktop }}, 1fr);
-    gap: var(--grid-gap);
-  }
-
-  @media screen and (max-width: 749px) {
-    .product-grid {
-      grid-template-columns: repeat({{ section.settings.columns_mobile }}, 1fr);
-    }
+    gap: 30px;
+    margin-bottom: 40px;
   }
 
   .product-card {
-    border: 1px solid var(--color-border);
-    padding: 10px;
-    text-align: center;
+    text-align: left;
+    transition: transform 0.2s;
+  }
+  
+  .product-card:hover {
+    transform: translateY(-5px);
   }
 
   .product-card__image-wrapper {
     position: relative;
-    padding-bottom: 100%;
-    margin-bottom: 10px;
-    background: #f4f4f4;
+    padding-bottom: 110%; /* Taller aspect ratio */
+    margin-bottom: 16px;
+    background: #F0EEED;
+    border-radius: 20px;
     overflow: hidden;
+    display: block;
   }
 
   .product-card__image {
@@ -39,27 +43,61 @@
     top: 0; left: 0;
     width: 100%; height: 100%;
     object-fit: cover;
+    mix-blend-mode: multiply;
   }
 
   .product-card__title {
-    margin: 10px 0 5px;
-    font-size: 1.1em;
+    font-family: 'Satoshi', sans-serif;
+    font-weight: 700;
+    font-size: 18px;
     text-decoration: none;
-    color: inherit;
+    color: var(--color-text);
     display: block;
+    margin-bottom: 8px;
+  }
+
+  .product-card__rating {
+    color: #FFC633;
+    font-size: 14px;
+    margin-bottom: 8px;
   }
 
   .product-card__price {
+    font-size: 20px;
+    font-weight: 700;
     color: var(--color-text);
+  }
+
+  .view-all-btn {
+    display: inline-block;
+    padding: 12px 60px;
+    border: 1px solid rgba(0,0,0,0.1);
+    border-radius: 62px;
+    color: black;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s;
+  }
+  
+  .view-all-btn:hover {
+    background: black;
+    color: white;
+  }
+
+  @media screen and (max-width: 749px) {
+    .product-grid {
+      grid-template-columns: repeat({{ section.settings.columns_mobile }}, 1fr);
+      gap: 16px;
+    }
+    .featured-collection__title {
+      font-size: 32px;
+      margin-bottom: 30px;
+    }
   }
 {%- endstyle -%}
 
 <div class="featured-collection page-width">
-  <div class="featured-collection__header">
-    {%- if section.settings.title != blank -%}
-      <h2 class="featured-collection__title">{{ section.settings.title | escape }}</h2>
-    {%- endif -%}
-  </div>
+  <h2 class="featured-collection__title">{{ section.settings.title | escape }}</h2>
 
   <div class="product-grid">
     {%- assign collection = collections[section.settings.collection] -%}
@@ -67,31 +105,39 @@
       <div class="product-card">
         <a href="{{ product.url }}" class="product-card__image-wrapper">
           {%- if product.featured_image != blank -%}
-            <img src="{{ product.featured_image | image_url: width: 533 }}"
+            <img src="{{ product.featured_image | image_url: width: 600 }}"
               alt="{{ product.title | escape }}"
               class="product-card__image"
               loading="lazy"
-              width="533"
-              height="{{ 533 | divided_by: product.featured_image.aspect_ratio }}">
+              width="600"
+              height="{{ 600 | divided_by: product.featured_image.aspect_ratio }}">
           {%- else -%}
              {{ 'product-' | append: forloop.index | placeholder_svg_tag: 'placeholder-svg' }}
           {%- endif -%}
         </a>
         <a href="{{ product.url }}" class="product-card__title">{{ product.title }}</a>
+        <div class="product-card__rating">★★★★☆ 4.5/5</div>
         <div class="product-card__price">{{ product.price | money }}</div>
       </div>
     {%- else -%}
-      {%- for i in (1..4) -%}
+      {%- for i in (1..section.settings.products_to_show) -%}
         <div class="product-card">
-          <div class="product-card__image-wrapper">
-             {{ 'product-' | append: i | placeholder_svg_tag: 'placeholder-svg' }}
-          </div>
-          <div class="product-card__title">Example Product Title</div>
-          <div class="product-card__price">{{ 1999 | money }}</div>
+          <a href="#" class="product-card__image-wrapper">
+             {{ 'product-' | append: i | placeholder_svg_tag: 'placeholder-svg product-card__image' }}
+          </a>
+          <a href="#" class="product-card__title">T-Shirt with Tape Details</a>
+          <div class="product-card__rating">★★★★☆ 4.5/5</div>
+          <div class="product-card__price">{{ 12000 | money }}</div>
         </div>
       {%- endfor -%}
     {%- endfor -%}
   </div>
+
+  {%- if section.settings.show_view_all -%}
+    <div class="center">
+      <a href="{{ collection.url | default: '/collections/all' }}" class="view-all-btn">View All</a>
+    </div>
+  {%- endif -%}
 </div>
 
 {% schema %}
@@ -102,7 +148,7 @@
       "type": "text",
       "id": "title",
       "label": "Heading",
-      "default": "Featured Collection"
+      "default": "NEW ARRIVALS"
     },
     {
       "type": "collection",
@@ -138,14 +184,10 @@
       "label": "Number of columns on mobile"
     },
     {
-      "type": "select",
-      "id": "title_alignment",
-      "options": [
-        { "value": "left", "label": "Left" },
-        { "value": "center", "label": "Center" }
-      ],
-      "default": "center",
-      "label": "Heading alignment"
+      "type": "checkbox",
+      "id": "show_view_all",
+      "default": true,
+      "label": "Show 'View All' button"
     },
     {
       "type": "range",

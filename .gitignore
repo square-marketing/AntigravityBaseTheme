@@ -1,0 +1,18 @@
+# System Files
+.DS_Store
+Thumbs.db
+
+# Shopify
+config/settings_data.json
+*.log
+.shopify/
+node_modules/
+.npm/
+.cache/
+
+# Agent
+.agent/workflow_state.json
+
+# IDE
+.vscode/
+.idea/

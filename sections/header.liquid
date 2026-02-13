@@ -1,23 +1,66 @@
 {%- style -%}
+  .announcement-bar {
+    background-color: #000000;
+    color: #ffffff;
+    text-align: center;
+    padding: 10px 20px;
+    font-size: 14px;
+    position: relative;
+    z-index: 1001;
+  }
+
+  .announcement-bar__close {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 16px;
+  }
+
   .header {
     background: {{ section.settings.bg_color }};
-    padding: {{ section.settings.padding_y }}px 0;
+    padding: 24px 0;
     border-bottom: 1px solid var(--color-border);
+    position: relative;
+    z-index: 1000;
   }
 
   .header__content {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    gap: 40px;
   }
 
-  .header__logo-img {
-    max-width: {{ section.settings.logo_width }}px;
+  /* Logo */
+  .header__logo {
+    flex-shrink: 0;
+    font-family: 'Integral CF', sans-serif; /* Fallback if not loaded */
+    font-weight: 900;
+    font-size: 32px;
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    margin-right: 20px;
+  }
+  
+  .header__logo a {
+    text-decoration: none;
+    color: var(--color-text);
+  }
+
+  /* Desktop Menu */
+  .header__nav {
+    display: none;
+    flex-shrink: 0;
   }
 
   .header__menu-list {
     display: flex;
-    gap: 20px;
+    gap: 24px;
     list-style: none;
     margin: 0;
     padding: 0;
@@ -27,92 +70,173 @@
     text-decoration: none;
     color: var(--color-text);
     font-weight: 500;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
   }
 
-  {% if section.settings.sticky_header %}
-  .header-wrapper.sticky {
-    position: sticky;
-    top: 0;
-    z-index: 1000;
+  /* Search Bar */
+  .header__search {
+    flex-grow: 1;
+    display: none; /* Hidden on mobile by default */
+    background: #F0F0F0;
+    border-radius: 62px;
+    padding: 12px 16px;
+    align-items: center;
+    gap: 12px;
   }
-  {% endif %}
 
-  /* Desktop Logo Alignment */
-  {% if section.settings.logo_position == 'center' %}
+  .header__search-input {
+    border: none;
+    background: transparent;
+    width: 100%;
+    font-size: 16px;
+    color: #000000;
+    outline: none;
+  }
+
+  .header__search-icon {
+    width: 24px;
+    height: 24px;
+    opacity: 0.4;
+  }
+
+  /* Icons */
+  .header__icons {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    flex-shrink: 0;
+  }
+
+  .header__icon {
+    color: var(--color-text);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Mobile Elements */
+  .header__hamburger {
+    display: block;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    margin-right: 16px;
+  }
+
+  @media screen and (min-width: 990px) {
+    .header__hamburger { display: none; }
+    .header__nav { display: block; }
+    .header__search { display: flex; }
+    .header__logo { margin-right: 0; }
+    .announcement-bar__close { display: block; }
+  }
+
+  @media screen and (max-width: 989px) {
     .header__content {
       justify-content: space-between;
+      gap: 10px;
+    }
+    .header__search {
+      display: none; /* Can toggle via JS if needed */
     }
     .header__logo {
-      order: 1;
-      flex-grow: 1;
-      text-align: center;
+      font-size: 24px;
+      margin-right: auto;
     }
-    .header__nav {
-      order: 0;
-      flex: 1;
-    }
-    .header__icons {
-      order: 2;
-      flex: 1;
-      display: flex;
-      justify-content: flex-end;
-    }
-  {% endif %}
+    /* Mobile Search Icon is part of header__icons */
+  }
 {%- endstyle -%}
 
+{%- if section.settings.show_announcement -%}
+  <div class="announcement-bar">
+    <span>{{ section.settings.announcement_text | escape }}</span>
+    <button class="announcement-bar__close" onclick="this.parentElement.style.display='none'">&times;</button>
+  </div>
+{%- endif -%}
+
 <div class="header-wrapper{% if section.settings.sticky_header %} sticky-header{% endif %}">
-  <header class="header page-width">
-    <div class="header__content">
-      
-      {%- if section.settings.logo_position != 'center' -%}
-        <div class="header__logo">
+  <header class="header">
+    <div class="page-width">
+      <div class="header__content">
+        
+        <button class="header__hamburger">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3 12H21" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M3 6H21" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M3 18H21" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+
+        <h1 class="header__logo">
           <a href="{{ routes.root_url }}">
             {%- if section.settings.logo != blank -%}
               <img src="{{ section.settings.logo | image_url: width: section.settings.logo_width }}"
-                class="header__logo-img"
                 alt="{{ shop.name }}"
                 width="{{ section.settings.logo_width }}"
                 height="{{ section.settings.logo_width | divided_by: section.settings.logo.aspect_ratio }}">
             {%- else -%}
-              <span class="h2">{{ shop.name }}</span>
+              SHOP.CO
             {%- endif -%}
           </a>
+        </h1>
+
+        <nav class="header__nav">
+          <ul class="header__menu-list">
+            {%- for link in section.settings.menu.links -%}
+              <li>
+                <a href="{{ link.url }}" class="header__menu-link">
+                  {{ link.title }}
+                  {%- if link.links != blank -%}
+                    <svg width="12" height="7" viewBox="0 0 12 7" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M11 1L6 6L1 1" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  {%- endif -%}
+                </a>
+              </li>
+            {%- endfor -%}
+          </ul>
+        </nav>
+
+        <div class="header__search">
+           <svg class="header__search-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M11 19C15.4183 19 19 15.4183 19 11C19 6.58172 15.4183 3 11 3C6.58172 3 3 6.58172 3 11C3 15.4183 6.58172 19 11 19Z" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M21 21L16.65 16.65" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <input type="text" 
+             placeholder="Search for products..." 
+             class="header__search-input"
+             name="q"
+             form="search-form">
         </div>
-      {%- endif -%}
 
-      <nav class="header__nav">
-        <ul class="header__menu-list">
-          {%- for link in section.settings.menu.links -%}
-            <li>
-              <a href="{{ link.url }}" class="header__menu-link">{{ link.title }}</a>
-            </li>
-          {%- endfor -%}
-        </ul>
-      </nav>
+        <div class="header__icons">
+          <!-- Mobile Search Icon Trigger (Only visible on mobile) -->
+          <a href="{{ routes.search_url }}" class="header__icon small-hide medium-hide">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M11 19C15.4183 19 19 15.4183 19 11C19 6.58172 15.4183 3 11 3C6.58172 3 3 6.58172 3 11C3 15.4183 6.58172 19 11 19Z" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M21 21L16.65 16.65" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </a>
 
-      {%- if section.settings.logo_position == 'center' -%}
-        <div class="header__logo">
-          <a href="{{ routes.root_url }}">
-            {%- if section.settings.logo != blank -%}
-              <img src="{{ section.settings.logo | image_url: width: section.settings.logo_width }}"
-                class="header__logo-img"
-                alt="{{ shop.name }}"
-                width="{{ section.settings.logo_width }}"
-                height="{{ section.settings.logo_width | divided_by: section.settings.logo.aspect_ratio }}">
-            {%- else -%}
-              <span class="h2">{{ shop.name }}</span>
-            {%- endif -%}
+          <a href="{{ routes.cart_url }}" class="header__icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M9 22C9.55228 22 10 21.5523 10 21C10 20.4477 9.55228 20 9 20C8.44772 20 8 20.4477 8 21C8 21.5523 8.44772 22 9 22Z" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M20 22C20.5523 22 21 21.5523 21 21C21 20.4477 20.5523 20 20 20C19.4477 20 19 20.4477 19 21C19 21.5523 19.4477 22 20 22Z" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M1 1H5L7.68 14.39C7.77144 14.8504 8.02191 15.264 8.38755 15.5583C8.75318 15.8526 9.2107 16.009 9.68 16H19.4C19.8693 16.009 20.3268 15.8526 20.6925 15.5583C21.0581 15.264 21.3086 14.8504 21.4 14.39L23 6H6" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </a>
+          
+          <a href="{{ routes.account_url }}" class="header__icon">
+             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M20 21V19C20 17.9391 19.5786 16.9217 18.8284 16.1716C18.0783 15.4214 17.0609 15 16 15H8C6.93913 15 5.92172 15.4214 5.17157 16.1716C4.42143 16.9217 4 17.9391 4 19V21" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M12 11C14.2091 11 16 9.20914 16 7C16 4.79086 14.2091 3 12 3C9.79086 3 8 4.79086 8 7C8 9.20914 9.79086 11 12 11Z" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
           </a>
         </div>
-      {%- endif -%}
 
-      <div class="header__icons">
-        <a href="{{ routes.search_url }}" class="header__icon">
-          Search
-        </a>
-        <a href="{{ routes.cart_url }}" class="header__icon">
-          Cart
-        </a>
       </div>
     </div>
   </header>
@@ -122,6 +246,22 @@
 {
   "name": "Header",
   "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_announcement",
+      "default": true,
+      "label": "Show announcement bar"
+    },
+    {
+      "type": "text",
+      "id": "announcement_text",
+      "default": "Sign up and get 20% off to your first order. Sign Up Now",
+      "label": "Announcement text"
+    },
+    {
+      "type": "header",
+      "content": "Logo"
+    },
     {
       "type": "image_picker",
       "id": "logo",
@@ -135,17 +275,11 @@
       "step": 10,
       "unit": "px",
       "label": "Custom logo width",
-      "default": 100
+      "default": 140
     },
     {
-      "type": "select",
-      "id": "logo_position",
-      "options": [
-        { "value": "left", "label": "Left" },
-        { "value": "center", "label": "Center" }
-      ],
-      "default": "left",
-      "label": "Desktop logo position"
+      "type": "header",
+      "content": "Navigation"
     },
     {
       "type": "link_list",
@@ -164,16 +298,11 @@
       "id": "bg_color",
       "label": "Background Color",
       "default": "#ffffff"
-    },
+    }
+  ],
+  "presets": [
     {
-      "type": "range",
-      "id": "padding_y",
-      "min": 10,
-      "max": 60,
-      "step": 2,
-      "unit": "px",
-      "label": "Vertical Padding",
-      "default": 20
+      "name": "Header"
     }
   ]
 }

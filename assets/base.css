@@ -27,12 +27,23 @@ img {
   gap: var(--grid-gap);
 }
 
-.grid--2-col { --grid-cols: 2; }
-.grid--3-col { --grid-cols: 3; }
-.grid--4-col { --grid-cols: 4; }
+.grid--2-col {
+  --grid-cols: 2;
+}
+
+.grid--3-col {
+  --grid-cols: 3;
+}
+
+.grid--4-col {
+  --grid-cols: 4;
+}
 
 @media screen and (max-width: 749px) {
-  .grid--2-col, .grid--3-col, .grid--4-col {
+
+  .grid--2-col,
+  .grid--3-col,
+  .grid--4-col {
     --grid-cols: 1;
   }
 }
@@ -44,13 +55,27 @@ img {
   color: var(--btn-primary-text);
   border-radius: var(--btn-radius);
   text-decoration: none;
-  border: none;
+  border: 1px solid transparent;
   cursor: pointer;
-  transition: opacity 0.2s ease;
+  transition: all 0.2s ease;
+  font-weight: 500;
+  letter-spacing: 0.02em;
 }
 
 .btn:hover {
-  opacity: 0.9;
+  opacity: 0.8;
+  transform: scale(1.02);
+}
+
+.btn-secondary {
+  background-color: transparent;
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+}
+
+.btn-secondary:hover {
+  background-color: var(--color-text);
+  color: var(--color-background);
 }
 
 .visually-hidden {

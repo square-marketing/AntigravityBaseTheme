@@ -1,0 +1,108 @@
+{%- style -%}
+  .brands-strip {
+    background-color: {{ section.settings.bg_color }};
+    padding: {{ section.settings.padding_y }}px 0;
+    overflow: hidden;
+  }
+
+  .brands-strip__container {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 30px;
+  }
+
+  .brand-logo {
+    max-width: 120px;
+    height: auto;
+    opacity: 0.8;
+    filter: brightness(0) invert(1); /* Make logos white if background is black */
+    transition: opacity 0.3s;
+  }
+
+  .brand-logo:hover {
+    opacity: 1;
+  }
+
+  @media screen and (max-width: 749px) {
+    .brands-strip__container {
+      justify-content: center;
+      gap: 20px;
+    }
+    .brand-logo {
+      max-width: 80px;
+    }
+  }
+{%- endstyle -%}
+
+<div class="brands-strip page-width">
+  <div class="brands-strip__container">
+    {%- for block in section.blocks -%}
+      {%- if block.settings.logo != blank -%}
+        <img src="{{ block.settings.logo | image_url: width: 300 }}"
+          alt="{{ block.settings.title }}"
+          class="brand-logo"
+          width="300"
+          height="{{ 300 | divided_by: block.settings.logo.aspect_ratio }}">
+      {%- else -%}
+        <span style="color: white; font-family: 'Integral CF', sans-serif; font-size: 24px;">{{ block.settings.title }}</span>
+      {%- endif -%}
+    {%- endfor -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Brands Strip",
+  "settings": [
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "padding_y",
+      "min": 20,
+      "max": 60,
+      "step": 4,
+      "unit": "px",
+      "label": "Vertical Padding",
+      "default": 32
+    }
+  ],
+  "blocks": [
+    {
+      "type": "brand",
+      "name": "Brand",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "logo",
+          "label": "Logo Image"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "default": "Brand Name",
+          "label": "Brand Name (Fallback)"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Brands Strip",
+      "blocks": [
+        { "type": "brand", "settings": { "title": "VERSACE" } },
+        { "type": "brand", "settings": { "title": "ZARA" } },
+        { "type": "brand", "settings": { "title": "GUCCI" } },
+        { "type": "brand", "settings": { "title": "PRADA" } },
+        { "type": "brand", "settings": { "title": "CALVIN KLEIN" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

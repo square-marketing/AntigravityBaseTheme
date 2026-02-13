@@ -1,170 +1,194 @@
 {%- style -%}
-  .hero-banner {
-    position: relative;
+  .hero-section {
+    background-color: {{ section.settings.bg_color }};
+    padding: 40px 0;
+    overflow: hidden;
+  }
+
+  .hero__container {
     display: flex;
     align-items: center;
-    justify-content: center;
-    min-height: {{ section.settings.height }}vh;
-    background-size: cover;
-    background-position: center;
-    color: {{ section.settings.text_color }};
-    text-align: {{ section.settings.text_alignment }};
-  }
-
-  .hero-banner::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(0,0,0, {{ section.settings.overlay_opacity | divided_by: 100.0 }});
-    z-index: 1;
-  }
-
-  .hero__content {
+    justify-content: space-between;
+    gap: 40px;
     position: relative;
+  }
+
+  /* Left Column: Text */
+  .hero__content {
+    flex: 1;
+    max-width: 600px;
     z-index: 2;
-    max-width: 800px;
-    padding: 20px;
   }
 
-  .hero__title {
-    font-size: 3em;
-    margin-bottom: 20px;
-    color: inherit;
+  .hero__heading {
+    font-family: 'Integral CF', sans-serif;
+    font-size: 64px;
+    font-weight: 900;
+    line-height: 1;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    color: {{ section.settings.text_color }};
   }
 
-  .hero__text {
-    font-size: 1.25em;
-    margin-bottom: 30px;
+  .hero__subtext {
+    font-size: 16px;
+    color: rgba(0,0,0,0.6);
+    margin-bottom: 32px;
+    max-width: 400px;
+    line-height: 1.6;
   }
 
   .hero__btn {
     display: inline-block;
-    padding: 15px 30px;
     background: {{ section.settings.btn_color }};
     color: {{ section.settings.btn_text_color }};
+    padding: 16px 54px;
+    border-radius: 62px;
     text-decoration: none;
-    font-weight: bold;
-    border-radius: var(--btn-radius);
+    font-weight: 500;
+    font-size: 16px;
     transition: transform 0.2s;
   }
-  
+
   .hero__btn:hover {
     transform: scale(1.05);
   }
 
-  @media screen and (max-width: 749px) {
-    .hero__title { font-size: 2em; }
-    .hero-banner { min-height: {{ section.settings.height_mobile }}vh; }
+  .hero__stats {
+    display: flex;
+    gap: 32px;
+    margin-top: 48px;
+  }
+
+  .hero__stat-item h3 {
+    font-size: 24px;
+    font-weight: 700;
+    margin: 0;
+  }
+
+  .hero__stat-item p {
+    font-size: 12px;
+    color: rgba(0,0,0,0.6);
+    margin: 0;
+  }
+
+  /* Right Column: Image */
+  .hero__image-wrapper {
+    flex: 1;
+    position: relative;
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .hero__image {
+    max-width: 100%;
+    height: auto;
+    object-fit: cover;
+  }
+  
+  /* Decorative Stars */
+  .hero__star {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    z-index: 3;
+  }
+  .star-1 { top: 40%; right: 10%; width: 80px; height: 80px; }
+  .star-2 { top: 10%; left: 40%; }
+
+
+  @media screen and (max-width: 989px) {
+    .hero__container {
+      flex-direction: column;
+      text-align: center;
+      padding-top: 20px;
+    }
+
+    .hero__content {
+      max-width: 100%;
+    }
+
+    .hero__heading {
+      font-size: 36px;
+    }
+
+    .hero__subtext {
+      margin: 0 auto 24px;
+    }
+    
+    .hero__stats {
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 20px;
+      margin-bottom: 40px;
+    }
+
+    .star-1 { width: 50px; height: 50px; right: 5%; top: 10%; }
+    .star-2 { left: 10%; top: 50%; }
   }
 {%- endstyle -%}
 
-<div class="hero-banner" style="background-image: url({{ section.settings.image | image_url: width: 2000 }});">
-  <div class="hero__content">
-    {%- if section.settings.title != blank -%}
-      <h2 class="hero__title">{{ section.settings.title | escape }}</h2>
-    {%- endif -%}
+<div class="hero-section">
+  <div class="page-width hero__container">
     
-    {%- if section.settings.text != blank -%}
-      <div class="hero__text">{{ section.settings.text }}</div>
-    {%- endif -%}
+    <div class="hero__content">
+      <h2 class="hero__heading">{{ section.settings.heading | escape }}</h2>
+      <div class="hero__subtext">{{ section.settings.subtext }}</div>
+      
+      {%- if section.settings.link_label != blank -%}
+        <a href="{{ section.settings.link }}" class="hero__btn">{{ section.settings.link_label }}</a>
+      {%- endif -%}
 
-    {%- if section.settings.link_label != blank and section.settings.link != blank -%}
-      <a href="{{ section.settings.link }}" class="hero__btn">{{ section.settings.link_label | escape }}</a>
-    {%- endif -%}
+      <div class="hero__stats">
+        {%- for block in section.blocks -%}
+          <div class="hero__stat-item">
+            <h3>{{ block.settings.stat_number }}</h3>
+            <p>{{ block.settings.stat_label }}</p>
+          </div>
+        {%- endfor -%}
+      </div>
+    </div>
+
+    <div class="hero__image-wrapper">
+      {%- if section.settings.image != blank -%}
+        <img src="{{ section.settings.image | image_url: width: 1000 }}"
+          alt="{{ section.settings.heading }}"
+          class="hero__image"
+          width="1000"
+          height="{{ 1000 | divided_by: section.settings.image.aspect_ratio }}">
+      {%- else -%}
+        {{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg hero__image' }}
+      {%- endif -%}
+      
+      <!-- Decorative vector stars (simplification of Figma assets) -->
+      <svg class="hero__star star-1" viewBox="0 0 100 100" fill="black"><path d="M50 0L61 39L100 50L61 61L50 100L39 61L0 50L39 39L50 0Z"/></svg>
+      <svg class="hero__star star-2" viewBox="0 0 100 100" fill="black"><path d="M50 0L61 39L100 50L61 61L50 100L39 61L0 50L39 39L50 0Z"/></svg>
+    </div>
+
   </div>
 </div>
 
 {% schema %}
 {
-  "name": "Hero Banner",
+  "name": "Hero (Figma Style)",
   "settings": [
     {
-      "type": "image_picker",
-      "id": "image",
-      "label": "Background Image"
-    },
-    {
-      "type": "range",
-      "id": "overlay_opacity",
-      "min": 0,
-      "max": 90,
-      "step": 10,
-      "unit": "%",
-      "label": "Overlay Opacity",
-      "default": 30
-    },
-    {
-      "type": "range",
-      "id": "height",
-      "min": 40,
-      "max": 100,
-      "step": 5,
-      "unit": "vh",
-      "label": "Section Height (Desktop)",
-      "default": 80
-    },
-    {
-      "type": "range",
-      "id": "height_mobile",
-      "min": 30,
-      "max": 100,
-      "step": 5,
-      "unit": "vh",
-      "label": "Section Height (Mobile)",
-      "default": 50
-    },
-    {
-      "type": "header",
-      "content": "Content"
-    },
-    {
       "type": "text",
-      "id": "title",
-      "default": "Welcome to our store",
+      "id": "heading",
+      "default": "FIND CLOTHES THAT MATCHES YOUR STYLE",
       "label": "Heading"
     },
     {
       "type": "richtext",
-      "id": "text",
-      "default": "<p>Give customers details about the banner image(s) or content on the template.</p>",
-      "label": "Text"
+      "id": "subtext",
+      "default": "<p>Browse through our diverse range of meticulously crafted garments, designed to bring out your individuality and cater to your sense of style.</p>",
+      "label": "Subtext"
     },
     {
-      "type": "select",
-      "id": "text_alignment",
-      "options": [
-        { "value": "left", "label": "Left" },
-        { "value": "center", "label": "Center" },
-        { "value": "right", "label": "Right" }
-      ],
-      "default": "center",
-      "label": "Text Alignment"
-    },
-    {
-      "type": "header",
-      "content": "Colors"
-    },
-    {
-      "type": "color",
-      "id": "text_color",
-      "label": "Text Color",
-      "default": "#ffffff"
-    },
-    {
-      "type": "color",
-      "id": "btn_color",
-      "label": "Button Background",
-      "default": "#ffffff"
-    },
-    {
-      "type": "color",
-      "id": "btn_text_color",
-      "label": "Button Text",
-      "default": "#000000"
-    },
-    {
-      "type": "header",
-      "content": "Call to Action"
+      "type": "text",
+      "id": "link_label",
+      "default": "Shop Now",
+      "label": "Button Label"
     },
     {
       "type": "url",
@@ -172,15 +196,64 @@
       "label": "Button Link"
     },
     {
-      "type": "text",
-      "id": "link_label",
-      "label": "Button Label",
-      "default": "Shop Now"
+      "type": "image_picker",
+      "id": "image",
+      "label": "Hero Image"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background",
+      "default": "#F2F0F1"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "btn_color",
+      "label": "Button Background",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "btn_text_color",
+      "label": "Button Text",
+      "default": "#ffffff"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "stat",
+      "name": "Stat",
+      "limit": 3,
+      "settings": [
+        {
+          "type": "text",
+          "id": "stat_number",
+          "default": "200+",
+          "label": "Number"
+        },
+        {
+          "type": "text",
+          "id": "stat_label",
+          "default": "International Brands",
+          "label": "Label"
+        }
+      ]
     }
   ],
   "presets": [
     {
-      "name": "Hero Banner"
+      "name": "Hero (Figma Style)",
+      "blocks": [
+        { "type": "stat", "settings": { "stat_number": "200+", "stat_label": "International Brands" } },
+        { "type": "stat", "settings": { "stat_number": "2,000+", "stat_label": "High-Quality Products" } },
+        { "type": "stat", "settings": { "stat_number": "30,000+", "stat_label": "Happy Customers" } }
+      ]
     }
   ]
 }
