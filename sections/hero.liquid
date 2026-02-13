@@ -1,0 +1,187 @@
+{%- style -%}
+  .hero-banner {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: {{ section.settings.height }}vh;
+    background-size: cover;
+    background-position: center;
+    color: {{ section.settings.text_color }};
+    text-align: {{ section.settings.text_alignment }};
+  }
+
+  .hero-banner::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0, {{ section.settings.overlay_opacity | divided_by: 100.0 }});
+    z-index: 1;
+  }
+
+  .hero__content {
+    position: relative;
+    z-index: 2;
+    max-width: 800px;
+    padding: 20px;
+  }
+
+  .hero__title {
+    font-size: 3em;
+    margin-bottom: 20px;
+    color: inherit;
+  }
+
+  .hero__text {
+    font-size: 1.25em;
+    margin-bottom: 30px;
+  }
+
+  .hero__btn {
+    display: inline-block;
+    padding: 15px 30px;
+    background: {{ section.settings.btn_color }};
+    color: {{ section.settings.btn_text_color }};
+    text-decoration: none;
+    font-weight: bold;
+    border-radius: var(--btn-radius);
+    transition: transform 0.2s;
+  }
+  
+  .hero__btn:hover {
+    transform: scale(1.05);
+  }
+
+  @media screen and (max-width: 749px) {
+    .hero__title { font-size: 2em; }
+    .hero-banner { min-height: {{ section.settings.height_mobile }}vh; }
+  }
+{%- endstyle -%}
+
+<div class="hero-banner" style="background-image: url({{ section.settings.image | image_url: width: 2000 }});">
+  <div class="hero__content">
+    {%- if section.settings.title != blank -%}
+      <h2 class="hero__title">{{ section.settings.title | escape }}</h2>
+    {%- endif -%}
+    
+    {%- if section.settings.text != blank -%}
+      <div class="hero__text">{{ section.settings.text }}</div>
+    {%- endif -%}
+
+    {%- if section.settings.link_label != blank and section.settings.link != blank -%}
+      <a href="{{ section.settings.link }}" class="hero__btn">{{ section.settings.link_label | escape }}</a>
+    {%- endif -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Hero Banner",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Background Image"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "min": 0,
+      "max": 90,
+      "step": 10,
+      "unit": "%",
+      "label": "Overlay Opacity",
+      "default": 30
+    },
+    {
+      "type": "range",
+      "id": "height",
+      "min": 40,
+      "max": 100,
+      "step": 5,
+      "unit": "vh",
+      "label": "Section Height (Desktop)",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "height_mobile",
+      "min": 30,
+      "max": 100,
+      "step": 5,
+      "unit": "vh",
+      "label": "Section Height (Mobile)",
+      "default": 50
+    },
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "default": "Welcome to our store",
+      "label": "Heading"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "default": "<p>Give customers details about the banner image(s) or content on the template.</p>",
+      "label": "Text"
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "center",
+      "label": "Text Alignment"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "btn_color",
+      "label": "Button Background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "btn_text_color",
+      "label": "Button Text",
+      "default": "#000000"
+    },
+    {
+      "type": "header",
+      "content": "Call to Action"
+    },
+    {
+      "type": "url",
+      "id": "link",
+      "label": "Button Link"
+    },
+    {
+      "type": "text",
+      "id": "link_label",
+      "label": "Button Label",
+      "default": "Shop Now"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Hero Banner"
+    }
+  ]
+}
+{% endschema %}

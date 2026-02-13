@@ -1,0 +1,167 @@
+{%- style -%}
+  .featured-collection {
+    padding: {{ section.settings.padding_y }}px 0;
+  }
+
+  .featured-collection__title {
+    text-align: {{ section.settings.title_alignment }};
+    margin-bottom: 40px;
+  }
+
+  .product-grid {
+    display: grid;
+    grid-template-columns: repeat({{ section.settings.columns_desktop }}, 1fr);
+    gap: var(--grid-gap);
+  }
+
+  @media screen and (max-width: 749px) {
+    .product-grid {
+      grid-template-columns: repeat({{ section.settings.columns_mobile }}, 1fr);
+    }
+  }
+
+  .product-card {
+    border: 1px solid var(--color-border);
+    padding: 10px;
+    text-align: center;
+  }
+
+  .product-card__image-wrapper {
+    position: relative;
+    padding-bottom: 100%;
+    margin-bottom: 10px;
+    background: #f4f4f4;
+    overflow: hidden;
+  }
+
+  .product-card__image {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+  }
+
+  .product-card__title {
+    margin: 10px 0 5px;
+    font-size: 1.1em;
+    text-decoration: none;
+    color: inherit;
+    display: block;
+  }
+
+  .product-card__price {
+    color: var(--color-text);
+  }
+{%- endstyle -%}
+
+<div class="featured-collection page-width">
+  <div class="featured-collection__header">
+    {%- if section.settings.title != blank -%}
+      <h2 class="featured-collection__title">{{ section.settings.title | escape }}</h2>
+    {%- endif -%}
+  </div>
+
+  <div class="product-grid">
+    {%- assign collection = collections[section.settings.collection] -%}
+    {%- for product in collection.products limit: section.settings.products_to_show -%}
+      <div class="product-card">
+        <a href="{{ product.url }}" class="product-card__image-wrapper">
+          {%- if product.featured_image != blank -%}
+            <img src="{{ product.featured_image | image_url: width: 533 }}"
+              alt="{{ product.title | escape }}"
+              class="product-card__image"
+              loading="lazy"
+              width="533"
+              height="{{ 533 | divided_by: product.featured_image.aspect_ratio }}">
+          {%- else -%}
+             {{ 'product-' | append: forloop.index | placeholder_svg_tag: 'placeholder-svg' }}
+          {%- endif -%}
+        </a>
+        <a href="{{ product.url }}" class="product-card__title">{{ product.title }}</a>
+        <div class="product-card__price">{{ product.price | money }}</div>
+      </div>
+    {%- else -%}
+      {%- for i in (1..4) -%}
+        <div class="product-card">
+          <div class="product-card__image-wrapper">
+             {{ 'product-' | append: i | placeholder_svg_tag: 'placeholder-svg' }}
+          </div>
+          <div class="product-card__title">Example Product Title</div>
+          <div class="product-card__price">{{ 1999 | money }}</div>
+        </div>
+      {%- endfor -%}
+    {%- endfor -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Featured Collection",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Featured Collection"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Collection"
+    },
+    {
+      "type": "range",
+      "id": "products_to_show",
+      "min": 2,
+      "max": 12,
+      "step": 1,
+      "default": 4,
+      "label": "Maximum products to show"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "min": 2,
+      "max": 5,
+      "step": 1,
+      "default": 4,
+      "label": "Number of columns on desktop"
+    },
+    {
+      "type": "select",
+      "id": "columns_mobile",
+      "options": [
+        { "value": "1", "label": "1 column" },
+        { "value": "2", "label": "2 columns" }
+      ],
+      "default": "2",
+      "label": "Number of columns on mobile"
+    },
+    {
+      "type": "select",
+      "id": "title_alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" }
+      ],
+      "default": "center",
+      "label": "Heading alignment"
+    },
+    {
+      "type": "range",
+      "id": "padding_y",
+      "min": 20,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Vertical Padding",
+      "default": 60
+    }
+  ],
+  "presets": [
+    {
+      "name": "Featured Collection"
+    }
+  ]
+}
+{% endschema %}

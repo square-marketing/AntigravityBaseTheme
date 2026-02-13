@@ -1,0 +1,21 @@
+{
+    "sections": {
+        "banner": {
+            "type": "hero",
+            "settings": {
+                "title": "Shop Our Collection",
+                "text": "<p>Browse our latest products.</p>",
+                "height": 40,
+                "text_alignment": "center"
+            }
+        },
+        "product-grid": {
+            "type": "featured-collection",
+            "settings": {}
+        }
+    },
+    "order": [
+        "banner",
+        "product-grid"
+    ]
+}

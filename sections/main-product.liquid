@@ -1,0 +1,241 @@
+{%- style -%}
+  .product-section {
+    padding: {{ section.settings.padding_y }}px 0;
+  }
+
+  .product__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    align-items: start;
+  }
+
+  .product__media-gallery {
+    position: sticky;
+    top: 20px;
+  }
+
+  .product__image {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+  }
+
+  .product__info {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .product__title {
+    font-size: 2.5em;
+    margin: 0;
+  }
+
+  .product__price {
+    font-size: 1.5em;
+    font-weight: 500;
+  }
+
+  .product__description {
+    line-height: 1.6;
+    margin-top: 20px;
+  }
+
+  .product__form {
+    margin-top: 20px;
+  }
+
+  @media screen and (max-width: 749px) {
+    .product__grid { grid-template-columns: 1fr; }
+    .product__media-gallery { position: static; }
+  }
+{%- endstyle -%}
+
+<div class="product-section page-width">
+  <div class="product__grid">
+    <!-- Media Column -->
+    <div class="product__media-gallery">
+      {%- if product.featured_image != blank -%}
+        <img src="{{ product.featured_image | image_url: width: 1000 }}"
+          alt="{{ product.title | escape }}"
+          class="product__image"
+          width="1000"
+          height="{{ 1000 | divided_by: product.featured_image.aspect_ratio }}">
+      {%- else -%}
+        {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
+      {%- endif -%}
+    </div>
+
+    <!-- Info Column -->
+    <div class="product__info">
+      {%- for block in section.blocks -%}
+        {%- case block.type -%}
+          {%- when '@app' -%}
+            {% render block %}
+          
+          {%- when 'title' -%}
+            <h1 class="product__title" {{ block.shopify_attributes }}>
+              {{ product.title | escape }}
+            </h1>
+
+          {%- when 'price' -%}
+            <div class="product__price" {{ block.shopify_attributes }}>
+              {{ product.price | money }}
+              {%- if product.compare_at_price > product.price -%}
+                <s class="product__price--compare">{{ product.compare_at_price | money }}</s>
+              {%- endif -%}
+            </div>
+
+          {%- when 'variant_picker' -%}
+            {%- unless product.has_only_default_variant -%}
+              <variant-selects class="no-js-hidden" data-section="{{ section.id }}" data-url="{{ product.url }}" {{ block.shopify_attributes }}>
+                {%- for option in product.options_with_values -%}
+                  <div class="product-form__input">
+                    <label class="form__label" for="Option-{{ section.id }}-{{ forloop.index0 }}">
+                      {{ option.name }}
+                    </label>
+                    <div class="select">
+                      <select id="Option-{{ section.id }}-{{ forloop.index0 }}"
+                        class="select__select"
+                        name="options[{{ option.name | escape }}]"
+                        form="product-form-{{ section.id }}">
+                        {%- for value in option.values -%}
+                          <option value="{{ value | escape }}" {% if option.selected_value == value %}selected="selected"{% endif %}>
+                            {{ value }}
+                          </option>
+                        {%- endfor -%}
+                      </select>
+                    </div>
+                  </div>
+                {%- endfor -%}
+                <script type="application/json">
+                  {{ product.variants | json }}
+                </script>
+              </variant-selects>
+            {%- endunless -%}
+
+          {%- when 'buy_buttons' -%}
+            <div class="product-form__buttons" {{ block.shopify_attributes }}>
+              {%- form 'product', product, id: 'product-form-{{ section.id }}', class: 'form' -%}
+                <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+                <div class="product-form__buttons">
+                  <button type="submit" name="add" class="product-form__submit btn button--full-width"
+                  {% if product.selected_or_first_available_variant.available == false %}disabled{% endif %}>
+                    <span>
+                      {%- if product.selected_or_first_available_variant.available -%}
+                        Add to cart
+                      {%- else -%}
+                        Sold out
+                      {%- endif -%}
+                    </span>
+                  </button>
+                  {%- if block.settings.show_dynamic_checkout -%}
+                    {{ form | payment_button }}
+                  {%- endif -%}
+                </div>
+              {%- endform -%}
+            </div>
+          
+          {%- when 'description' -%}
+            <div class="product__description rte" {{ block.shopify_attributes }}>
+              {{ product.description }}
+            </div>
+          
+          {%- when 'share' -%}
+            <div class="share-button" {{ block.shopify_attributes }}>
+              <!-- Share button implementation -->
+              <button class="share-button__button hidden">
+                Share
+              </button>
+            </div>
+
+        {%- endcase -%}
+      {%- endfor -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Product Information",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "range",
+      "id": "padding_y",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Vertical Padding",
+      "default": 40
+    }
+  ],
+  "blocks": [
+    {
+      "type": "@app"
+    },
+    {
+      "type": "title",
+      "name": "Title",
+      "limit": 1
+    },
+    {
+      "type": "price",
+      "name": "Price",
+      "limit": 1
+    },
+    {
+      "type": "variant_picker",
+      "name": "Variant Picker",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "select",
+          "id": "picker_type",
+          "options": [
+            { "value": "dropdown", "label": "Dropdown" },
+            { "value": "button", "label": "Buttons" }
+          ],
+          "default": "button",
+          "label": "Type"
+        }
+      ]
+    },
+    {
+      "type": "buy_buttons",
+      "name": "Buy Buttons",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "checkbox",
+          "id": "show_dynamic_checkout",
+          "default": true,
+          "label": "Show dynamic checkout buttons"
+        }
+      ]
+    },
+    {
+      "type": "description",
+      "name": "Description",
+      "limit": 1
+    },
+    {
+      "type": "share",
+      "name": "Share",
+      "limit": 1
+    }
+  ],
+  "default": {
+    "blocks": [
+      { "type": "title" },
+      { "type": "price" },
+      { "type": "variant_picker" },
+      { "type": "buy_buttons" },
+      { "type": "description" }
+    ]
+  }
+}
+{% endschema %}
